@@ -1,0 +1,20 @@
+####energy.cpp:
+computate the mol and receptor energy,
+E = E(internal ligand) + E(interaction between the receptor and ligand)
+input: receptor, ligand
+output: the total energy
+
+#### match.cpp
+using the dock6 methond to superpose the ligand and negativeimage
+input:negative image pdb file, and mol2
+output: the new mol2 matching the negative image
+
+#### traslate_rotate.cpp
+translate and rotate the mol2
+input: mol2, and bool random (if 1, randomly translate and rotate the mol2; if 0 (default), translate and rotate non randomly)
+output: the new mol2
+
+
+#### read file 
+std :: ifstream ifs(file, ios::in);
+file is the name, it is a char*

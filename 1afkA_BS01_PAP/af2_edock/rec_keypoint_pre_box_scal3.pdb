@@ -1,0 +1,19 @@
+HEADER    CORNERS OF BOX
+REMARK    CENTER (X Y Z)   -2.117  12.733  -0.258
+REMARK    DIMENSIONS (X Y Z)   19.578  17.769  16.405
+ATOM      1  C   BOX     1     -11.906   3.848  -8.460
+ATOM      2  C   BOX     1       7.672   3.848  -8.460
+ATOM      3  C   BOX     1       7.672   3.848   7.945
+ATOM      4  C   BOX     1     -11.906   3.848   7.945
+ATOM      5  C   BOX     1     -11.906  21.617  -8.460
+ATOM      6  C   BOX     1       7.672  21.617  -8.460
+ATOM      7  C   BOX     1       7.672  21.617   7.945
+ATOM      8  C   BOX     1     -11.906  21.617   7.945
+CONECT    1    2    4    5
+CONECT    2    1    3    6
+CONECT    3    2    4    7
+CONECT    4    1    3    8
+CONECT    5    1    6    8
+CONECT    6    2    5    7
+CONECT    7    3    6    8
+CONECT    8    4    5    7
