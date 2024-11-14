@@ -2220,11 +2220,11 @@ float ElectronDensity::matchcentroidposexz(DOCKMol lig)
 //
 //    return CC_i2;        
 //}
-float ElectronDensity::matchpose(DOCKMol lig, DOCKMol lig1)
+float ElectronDensity::matchpose(DOCKMol lig)
 {
 	vector<float> del_ijx(3, 0.0);
 	vector<float> atm_jx(3, 0.0);
-	string elt_i;
+	string elt_i,elt_i1;
 	int pnum = 1;
 	vector<float> atm_idx;
 	ObjexxFCL::FArray3D< float > rhoC;
@@ -2244,15 +2244,15 @@ float ElectronDensity::matchpose(DOCKMol lig, DOCKMol lig1)
 		//        if(pointsBx[i].elt_ == "CA")
 		//        {
 		elt_i = lig.atom_names[i];
-		elt_i = elt_i[0];
-		if(lig.atom_types[i] != "H")
+		elt_i1 = elt_i[0];
+		if(elt_i == "CA")
 		{
 			atm_idx = vector<float>(3, 0.0);
 			vector<float> cartX1(3, 0.0);
 			vector<float> fracX1;
 			//elt_i = PB[i].elt_;
 			//elt_i = elt_i[0];
-			OneGaussianScattering sig_j = get_A(elt_i);
+			OneGaussianScattering sig_j = get_A(elt_i1);
 			float k = sig_j.k(effectiveB);
 			float C = sig_j.C(k);
 			if (C < 1e-6) continue;
@@ -2318,85 +2318,82 @@ float ElectronDensity::matchpose(DOCKMol lig, DOCKMol lig1)
 		}
 	}
 
-	for (int i = 0; i < lig1.num_atoms; i++)
-	{
-		//        cout<<"YYYY: "<<pointsBx[i].elt_<<endl;;
-		//        if(pointsBx[i].elt_ == "CA")
-		//        {
-		elt_i = lig1.atom_names[i];
-		elt_i = elt_i[0];
-		if (lig1.atom_types[i] != "H")
-		{
-			atm_idx = vector<float>(3, 0.0);
-			vector<float> cartX1(3, 0.0);
-			vector<float> fracX1;
-			//elt_i = PB[i].elt_;
-			//elt_i = elt_i[0];
-			OneGaussianScattering sig_j = get_A(elt_i);
-			float k = sig_j.k(effectiveB);
-			float C = sig_j.C(k);
-			if (C < 1e-6) continue;
-
-			//cartX1 = PB[i].x_;
-			cartX1[0] = lig1.x[i];
-			cartX1[1] = lig1.y[i];
-			cartX1[2] = lig1.z[i];
-			MatrixTimesTransVector(c2f, cartX1, fracX1);
-			// the location of atom in grid ?
-			atm_idx[0] = (double(fracX1[0] * grid[0] - origin[0] + 1));
-			atm_idx[1] = (double(fracX1[1] * grid[1] - origin[1] + 1));
-			atm_idx[2] = (double(fracX1[2] * grid[2] - origin[2] + 1));
-			//        atm_idx[tmp_i][0] = fracX1[0]*theDensityMap.grid[0] - theDensityMap.origin[0] + 1 ;
-			//        atm_idx[tmp_i][1] = fracX1[1]*theDensityMap.grid[1] - theDensityMap.origin[1] + 1 ;
-			//        atm_idx[tmp_i][2] = fracX1[2]*theDensityMap.grid[2] - theDensityMap.origin[2] + 1 ;
-			//        cout<<"RRRR: "<<atm_idx[tmp_i][0]<<" "<<atm_idx[tmp_i][1]<<" "<<atm_idx[tmp_i][2]<<endl; 
-			for (int z = 1; z <= Denz; z++)
-			{
-				atm_jx[2] = z;
-				del_ijx[2] = (atm_idx[2] - atm_jx[2]) / grid[2];
-				del_ijx[0] = del_ijx[1] = 0.0;
-				vector<float> frac_tmpz;
-				MatrixTimesTransVector(f2c, del_ijx, frac_tmpz);
-				if (square_len(frac_tmpz) > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
-				for (int y = 1; y <= Deny; y++)
-				{
-					atm_jx[1] = y;
-					del_ijx[1] = (atm_idx[1] - atm_jx[1]) / grid[1];
-					del_ijx[0] = 0.0;
-					vector<float> frac_tmpy;
-					MatrixTimesTransVector(f2c, del_ijx, frac_tmpy);
-					if (square_len(frac_tmpy) > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
-					for (int x = 1; x <= Denx; x++)
-					{
-						atm_jx[0] = x;
-						del_ijx[0] = (atm_idx[0] - atm_jx[0]) / grid[0];
-						vector<float> cart_del_ij2;
-						MatrixTimesTransVector(f2c, del_ijx, cart_del_ij2);
-						float d2 = square_len(cart_del_ij2);
-						if (d2 > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
-
-						float atm = C * exp(-k * d2);
-						//                            cout<<"MASK: "<<theDensityMap.ATOM_MASK<<endl;
-						float sigmoid_msk = exp(d2 - (ATOM_MASK) * (ATOM_MASK));
-						//    float sigmoid_msk = exp( sqrt(d2) - (theDensityMap.ATOM_MASK)  );
-						//    float sigmoid_msk = exp( sqrt(d2) - (theDensityMap.CA_MASK)  );
-						float inv_msk = 1 / (1 + sigmoid_msk);
-						rhoC(x, y, z) += atm;
-						inv_rho_mask0(x, y, z) *= (1 - inv_msk);
-
-						//                            if ( d2 <= (theDensityMap.ATOM_MASK_SQ) ) {
-						//                                mask2(x,y,z) = 1.0; // problem?
-						//                                if ( d2 <= (theDensityMap.ATOM_DENS_SQ) ) {
-						//                                    float atm = C*exp(-k*d2);
-						//                                    rhoC(x,y,z) += atm;
-						//                                }
-						//                            }
-					}
-				}
-			}
-			//            cout<<" "<<tmp_i<<" "<<endl;                                       
-		}
-	}
+	//for (int i = 0; i < lig1.num_atoms; i++)
+	//{
+	//	//        cout<<"YYYY: "<<pointsBx[i].elt_<<endl;;
+	//	//        if(pointsBx[i].elt_ == "CA")
+	//	//        {
+	//	elt_i = lig1.atom_names[i];
+	//	elt_i = elt_i[0];
+	//	if (lig1.atom_types[i] != "H")
+	//	{
+	//		atm_idx = vector<float>(3, 0.0);
+	//		vector<float> cartX1(3, 0.0);
+	//		vector<float> fracX1;
+	//		//elt_i = PB[i].elt_;
+	//		//elt_i = elt_i[0];
+	//		OneGaussianScattering sig_j = get_A(elt_i);
+	//		float k = sig_j.k(effectiveB);
+	//		float C = sig_j.C(k);
+	//		if (C < 1e-6) continue;
+	//		//cartX1 = PB[i].x_;
+	//		cartX1[0] = lig1.x[i];
+	//		cartX1[1] = lig1.y[i];
+	//		cartX1[2] = lig1.z[i];
+	//		MatrixTimesTransVector(c2f, cartX1, fracX1);
+	//		// the location of atom in grid ?
+	//		atm_idx[0] = (double(fracX1[0] * grid[0] - origin[0] + 1));
+	//		atm_idx[1] = (double(fracX1[1] * grid[1] - origin[1] + 1));
+	//		atm_idx[2] = (double(fracX1[2] * grid[2] - origin[2] + 1));
+	//		//        atm_idx[tmp_i][0] = fracX1[0]*theDensityMap.grid[0] - theDensityMap.origin[0] + 1 ;
+	//		//        atm_idx[tmp_i][1] = fracX1[1]*theDensityMap.grid[1] - theDensityMap.origin[1] + 1 ;
+	//		//        atm_idx[tmp_i][2] = fracX1[2]*theDensityMap.grid[2] - theDensityMap.origin[2] + 1 ;
+	//		//        cout<<"RRRR: "<<atm_idx[tmp_i][0]<<" "<<atm_idx[tmp_i][1]<<" "<<atm_idx[tmp_i][2]<<endl; 
+	//		for (int z = 1; z <= Denz; z++)
+	//		{
+	//			atm_jx[2] = z;
+	//			del_ijx[2] = (atm_idx[2] - atm_jx[2]) / grid[2];
+	//			del_ijx[0] = del_ijx[1] = 0.0;
+	//			vector<float> frac_tmpz;
+	//			MatrixTimesTransVector(f2c, del_ijx, frac_tmpz);
+	//			if (square_len(frac_tmpz) > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
+	//			for (int y = 1; y <= Deny; y++)
+	//			{
+	//				atm_jx[1] = y;
+	//				del_ijx[1] = (atm_idx[1] - atm_jx[1]) / grid[1];
+	//				del_ijx[0] = 0.0;
+	//				vector<float> frac_tmpy;
+	//				MatrixTimesTransVector(f2c, del_ijx, frac_tmpy);
+	//				if (square_len(frac_tmpy) > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
+	//				for (int x = 1; x <= Denx; x++)
+	//				{
+	//					atm_jx[0] = x;
+	//					del_ijx[0] = (atm_idx[0] - atm_jx[0]) / grid[0];
+	//					vector<float> cart_del_ij2;
+	//					MatrixTimesTransVector(f2c, del_ijx, cart_del_ij2);
+	//					float d2 = square_len(cart_del_ij2);
+	//					if (d2 > (ATOM_MASK_PADDING + CA_MASK) * (ATOM_MASK_PADDING + CA_MASK)) continue;
+	//					float atm = C * exp(-k * d2);
+	//					//                            cout<<"MASK: "<<theDensityMap.ATOM_MASK<<endl;
+	//					float sigmoid_msk = exp(d2 - (ATOM_MASK) * (ATOM_MASK));
+	//					//    float sigmoid_msk = exp( sqrt(d2) - (theDensityMap.ATOM_MASK)  );
+	//					//    float sigmoid_msk = exp( sqrt(d2) - (theDensityMap.CA_MASK)  );
+	//					float inv_msk = 1 / (1 + sigmoid_msk);
+	//					rhoC(x, y, z) += atm;
+	//					inv_rho_mask0(x, y, z) *= (1 - inv_msk);
+	//					//                            if ( d2 <= (theDensityMap.ATOM_MASK_SQ) ) {
+	//					//                                mask2(x,y,z) = 1.0; // problem?
+	//					//                                if ( d2 <= (theDensityMap.ATOM_DENS_SQ) ) {
+	//					//                                    float atm = C*exp(-k*d2);
+	//					//                                    rhoC(x,y,z) += atm;
+	//					//                                }
+	//					//                            }
+	//				}
+	//			}
+	//		}
+	//		//            cout<<" "<<tmp_i<<" "<<endl;                                       
+	//	}
+	//}
 
 	float sumC_i2 = 0.0, sumO_i2 = 0.0, sumCO_i2 = 0.0, vol_i2 = 0.0, CC_i2 = 0.0;
 	float sumO2_i2 = 0.0, sumC2_i2 = 0.0, varC_i2 = 0.0, varO_i2 = 0.0;

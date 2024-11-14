@@ -107,8 +107,8 @@ bool Write_Mol2(DOCKMol & mol, ofstream & ofs, string s)
             sprintf(line,
                     "%7d%1s%-6s%12.4f%10.4f%10.4f%1s%-5s%4s%1s %-8s%10.4f",
                     current_atom, "", mol.atom_names[i].c_str(), mol.x[i],
-                    mol.y[i], mol.z[i], "", mol.atom_types[i].c_str(), "1", "",
-                    mol.subst_names[i].c_str(), mol.charges[i]);
+                    mol.y[i], mol.z[i], "", mol.atom_types[i].c_str(), mol.atom_residue_numbers[i].c_str(),
+                    "",mol.subst_names[i].c_str(), mol.charges[i]);
 
             ofs << line << endl;
 

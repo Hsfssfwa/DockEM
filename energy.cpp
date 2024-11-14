@@ -1588,15 +1588,17 @@ bool energy (AMBER_TYPER & amber, DOCKMol & mol, DOCKMol & receptor, Energy_Scor
     //float energy_tor_total = tor_energy_total (amber,biolip_matrix,rotatorsions);
     mol.energy_tor_total = tor_energy_total (amber,biolip_matrix,rotatorsions);
     if (mol.energy_tor_total < -500) mol.energy_tor_total = -500;
-    mol.contact_energy = contact_energy(mol, sphx,sphy,sphz);
-    if(c_nrg.compute_score(mol,cutoff)){
+
+    //mol.contact_energy = contact_energy(mol, sphx,sphy,sphz);
+    //if(c_nrg.compute_score(mol,cutoff))
+    {
 	//cout<<"c_nrg.compute_score finish"<<endl;
         //energy_inter_score = mol.current_score;
-
         energy_inter_score = mol.intral_energy;
         internal_energy = mol.internal_energy;
         //float hb_energy = hbond_energy(mol,receptor);
         mol.hb_energy = hbond_energy(mol,receptor);
+
         //cout<<"hb_energy test "<<mol.hb_energy<<"**************"<<endl;
         /***************************************************/
         /***************************************************/
@@ -1622,7 +1624,6 @@ bool energy (AMBER_TYPER & amber, DOCKMol & mol, DOCKMol & receptor, Energy_Scor
                 new_clash = new_clash + GetVdwEgCG(VR1, VR2, dis_p);
             }
         }
-
         float distance = 0.0;
         vector<float> centers_1(3,0);
         for (int i = 0; i < mol.num_atoms; i++)
@@ -1634,7 +1635,6 @@ bool energy (AMBER_TYPER & amber, DOCKMol & mol, DOCKMol & receptor, Energy_Scor
         centers_1[0] = centers_1[0] / mol.num_atoms;
         centers_1[1] = centers_1[1] / mol.num_atoms;
         centers_1[2] = centers_1[2] / mol.num_atoms;
-
         float max = 0;
         float car_x = 0, car_y = 0, car_z = 0;
         for (int i = 0; i < mol.num_atoms; i++)
@@ -1679,7 +1679,7 @@ bool energy (AMBER_TYPER & amber, DOCKMol & mol, DOCKMol & receptor, Energy_Scor
         if (mol.num_atoms > 40) CC_weight = 5000.0;
         //if (mol.current_EM_score < 0) mol.current_EM_score = 0;
         //mol.current_score = mol.intral_energy + bindsite_weight * mol.contact_energy + (-10.0) * mol.hb_energy + mol.internal_energy + mol.energy_tor_total +500*(1.0 - DensityMap.matchcentroidposexz(mol));
-        mol.current_score = /*mol.intral_energy + */ bindsite_weight * mol.contact_energy + (-10.0) * mol.hb_energy + mol.internal_energy + mol.energy_tor_total + CC_weight * (0.5 - mol.current_EM_score) + new_clash + inter_clash + distance;
+        mol.current_score = /*mol.intral_energy +  bindsite_weight * mol.contact_energy */ + (-10.0) * mol.hb_energy + mol.internal_energy + mol.energy_tor_total + CC_weight * (0.5 - mol.current_EM_score) + new_clash + inter_clash + distance;
         //mol.current_EM_score = DensityMap.clCC_2(mol, binding_site);
         
 		//cout<< DensityMap.clCC_2(mol, binding_site) <<endl;
@@ -1698,8 +1698,11 @@ bool energy (AMBER_TYPER & amber, DOCKMol & mol, DOCKMol & receptor, Energy_Scor
         //return energy_inter_score, internal_energy;
         return true;
     }
-    else
-        return false;
+    //else
+    //{
+    //cout << "1712" << endl;
+    //return false;
+    //}
     
 }
 

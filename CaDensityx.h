@@ -199,7 +199,7 @@ public:
 
 	float matchcentroidposex(DOCKMol lig);
 	float matchcentroidposexz(DOCKMol lig);
-	float matchpose(DOCKMol lig, DOCKMol lig1);
+	float matchpose(DOCKMol lig);
 	void diffmap(DOCKMol lig);
 /*	vector<float> matchposex_x(vector<poseCoord> PB, int seq_num);
 	float matchposedt(vector<poseCoord> PB, vector<distmap> dist_map,int seq_num);
