@@ -19,11 +19,11 @@ How to run this program?
   
         An example of implementation:
         > cd $pkgdir/DockEM-main/1afkA_BS01_PAP/af2_edock
-        > ../../DockEM af2_protein.mol2 lig_charge.mol2 bindingsite_pre.dat test1225 1afkA_BS01_PAP_map.mrc res 8.21 sam 0
+        > ../../DockEM af2_protein.mol2 super_lig_af2.mol2 bindingsite_pre.dat test1225 1afkA_BS01_PAP_map.mrc res 8.21 sam 0
        
 	5 input paramerters:
 	af2_protein.mol2 : protein mol2 file
-	lig_charge.mol2 : ligand mol2 file, add the H
+	super_lig_af2.mol2 : ligand mol2 file, add the H
 	bindingsite_pre.dat : binding sites file, amino acid residue index according to the protein index
 	test1225 : energy output file name, save the docking results
 	1afkA_BS01_PAP_map.mrc: density map mrc file
