@@ -111,12 +111,12 @@ int main(int argc, char ** argv){
     //string fileflex = "/home/zhangwy/program/dock6/parameters/flex.defn";
     //string fileflex_drive_tbl = "/home/zhangwy/program/dock6/parameters/flex_drive.tbl";
     
-    string filevdw = "../parameters/vdw_AMBER_parm99.defn";
-    string fileflex = "../parameters/flex.defn";
-    string fileflex_drive_tbl = "../parameters/flex_drive.tbl";
+    string filevdw = "../../parameters/vdw_AMBER_parm99.defn";
+    string fileflex = "../../parameters/flex.defn";
+    string fileflex_drive_tbl = "../../parameters/flex_drive.tbl";
     //$$$$$$$$$$$$$$$$$$$$read the BioLip_ligand_torsion_lib$$$$$$$$$$$$$$$$$
     //ifstream biolip_file("/home/zhangwy/program/EDock2019/edock_flex/BioLip_ligand_torsion_lib");
-    ifstream biolip_file("../parameters/BioLip_ligand_torsion_lib");
+    ifstream biolip_file("../../parameters/BioLip_ligand_torsion_lib");
 
     /*******************************************************************************************/
     //read the ligand informaiton about the title, mol_info_line, comment1, comment2, comment3,     
@@ -646,6 +646,15 @@ int main(int argc, char ** argv){
     }
     cout << endl;
 
+    if(binding_sites[1][0] != 0 && binding_sites[1][1] != 0 && binding_sites[1][2] != 0)
+    {
+        for (int j = 0; j < binding_sites[1].size(); j++)
+        {
+            cout << binding_sites[1][j] << ":";
+        }
+        cout << endl;
+    }
+
     for (int i=0;i<binding_sites[0].size();i++)
     {
         for(int j=0;j<receptor.num_atoms;j++)
@@ -681,6 +690,14 @@ int main(int argc, char ** argv){
     cartbinding[0] = cartbinding[0]/ protein_atom_num;
     cartbinding[1] = cartbinding[1]/ protein_atom_num;
     cartbinding[2] = cartbinding[2]/ protein_atom_num;
+
+    if (binding_sites[1][0] != 0 && binding_sites[1][1] != 0 && binding_sites[1][2] != 0)
+    {
+        cartbinding[0] = binding_sites[1][0];
+        cartbinding[1] = binding_sites[1][1];
+        cartbinding[2] = binding_sites[1][2];
+    }
+
     cout << "QQQQQ" << cartbinding[0] << "  " << cartbinding[1] << "  " << cartbinding[2] << endl;
     float car_x = 0, car_y = 0, car_z = 0;
     float max = 0;
