@@ -208,6 +208,26 @@ void read_binding_sites(const char *file, vector<vector <int> > &binding_sites)
            }
            //cout<<"\n";
            delete [] cstr;
+
+           vector <int> tmpint1;
+           binding_sites.push_back(tmpint1);
+           getline(fp, line);
+           //cout<<line<<"(((((((((((((((((("<<endl;
+           char* cstr1 = new char[line.length() + 1];
+           strcpy(cstr1, line.c_str());
+           const char* sep1 = ",";
+           char* p1;
+           p1 = strtok(cstr1, sep1);
+           while (p1)
+           {
+               //cout<<"site "<<atoi(p)<<endl;
+               binding_sites[binding_sites.size() - 1].push_back(atof(p1));
+               //cout<<"binding_sites.size()"<<binding_sites.size()<<endl;
+               p1 = strtok(NULL, sep1);
+           }
+           //cout<<"\n";
+           delete[] cstr1;
+
         }
 
         
