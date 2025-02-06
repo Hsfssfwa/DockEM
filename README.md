@@ -24,7 +24,7 @@ How to run this program?
 	5 input paramerters:
 	af2_protein.mol2 : protein mol2 file
 	super_lig_af2.mol2 : ligand mol2 file, add the H
-	bindingsite_pre.dat : binding sites file, second line：amino acid residue index arranged according to the protein index (set to 0 if not used); third line: Docking 		position coordinates (set to 0,0,0 if not used).
+	bindingsite_pre.dat : binding sites file, second line：amino acid residue index arranged according to the protein index (set to 0 if not used); third line: Docking position coordinates (set to 0,0,0 if not used).
 	test1225 : energy output file name, save the docking results
 	1afkA_BS01_PAP_map.mrc: density map mrc file
 	res 8.21 : Resolution of the density map
