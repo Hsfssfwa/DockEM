@@ -37,7 +37,7 @@ How to run this program?
         3 Additional Notes
         There are two types of input for bindingsite:
         1) Predicted binding site, input format such as bindingsite_pre.dat
-        2) Given a single binding coordinate, input format such as bindingsite_tmp_pre.dat
+        2) Given a single binding coordinate, input format such as bindingsite_pre_tmp.dat
 
 
 
