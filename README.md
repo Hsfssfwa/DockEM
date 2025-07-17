@@ -34,5 +34,10 @@ How to run this program?
 	test_protein.mol2：protein structure aligned with the density map
 	af2_protein.mol2.mol2：docked ligand result
 
+        3 Additional Notes
+        There are two types of input for bindingsite:
+        1) Predicted binding site, input format such as bindingsite_pre.dat
+        2) Given a single binding coordinate, input format such as bindingsite_tmp_pre.dat
+
 
 
